@@ -1,7 +1,7 @@
 {
-  "name": "webnook",
+  "name": "webnook-server",
   "version": "1.0.0",
-  "description": "Easy to use webhook server",
+  "description": "Webhook server for beginner",
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV=production node index.js",
