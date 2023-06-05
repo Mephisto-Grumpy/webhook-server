@@ -1,0 +1,159 @@
+<html>
+  <head>
+    <title>Webhook Events</title>
+    <style>
+      body {
+        height: 100vh;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background: #1b1b1b;
+        color: #f1f1f1;
+        backdrop-filter: blur(5px);
+      }
+      h1 {
+        margin-top: 50px;
+        color: #5ea2ff;
+      }
+      p {
+        margin: 20px;
+        color: #ffffff;
+      }
+      .card {
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 20px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        width: 400px;
+      }
+      .card-header {
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      .button {
+        display: inline-block;
+        background-color: #5ea2ff;
+        color: #ffffff;
+        text-decoration: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        border: none;
+        transition: all 0.3s ease;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+        font-size: 16px;
+      }
+      .button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+      }
+      .button:active {
+        transform: translateY(1px);
+        box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3);
+      }
+      table {
+        margin: 0 auto;
+        border-collapse: collapse;
+        margin-top: 25px;
+      }
+      th,
+      td {
+        padding: 10px 20px;
+      }
+      th {
+        background: #5ea2ff;
+        color: #ffffff;
+      }
+      td {
+        background: #2b4fff;
+        color: #ffffff;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Webhook Events</h1>
+    <a href="/" class="button">Go Back</a>
+    <br />
+    <br />
+    <div id="events-container"></div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io()
+      socket.on('connect', () => {
+        console.log('Connected to server')
+      })
+      socket.on('disconnect', () => {
+        console.log('Disconnected from server')
+      })
+      socket.on('newEvent', event => {
+        addEventToContainer(event)
+      })
+
+      function addEventToContainer(event) {
+        const eventsContainer = document.getElementById('events-container')
+        const eventCard = document.createElement('div')
+        eventCard.classList.add('card')
+        const eventHeader = document.createElement('div')
+        eventHeader.classList.add('card-header')
+        eventHeader.textContent = event.event
+        const eventBody = document.createElement('div')
+        eventBody.classList.add('card-body')
+        const eventTable = document.createElement('table')
+        const eventTableBody = document.createElement('tbody')
+        const timestampRow = document.createElement('tr')
+        const timestampLabelCell = document.createElement('td')
+        timestampLabelCell.textContent = 'Timestamp:'
+        const timestampValueCell = document.createElement('td')
+        timestampValueCell.textContent = event.timestamp
+        timestampRow.appendChild(timestampLabelCell)
+        timestampRow.appendChild(timestampValueCell)
+        eventTableBody.appendChild(timestampRow)
+        if (event.data) {
+          const eventDataRow = document.createElement('tr')
+          const eventDataLabelCell = document.createElement('td')
+          eventDataLabelCell.textContent = 'Event Data:'
+          const eventDataValueCell = document.createElement('td')
+          eventDataValueCell.textContent = JSON.stringify(event.data)
+          eventDataRow.appendChild(eventDataLabelCell)
+          eventDataRow.appendChild(eventDataValueCell)
+          eventTableBody.appendChild(eventDataRow)
+        }
+        eventTable.appendChild(eventTableBody)
+        eventBody.appendChild(eventTable)
+        eventCard.appendChild(eventHeader)
+        eventCard.appendChild(eventBody)
+        eventsContainer.appendChild(eventCard)
+      }
+
+      fetch('/api/events')
+        .then(response => {
+          if (response.ok) {
+            return response.json()
+          } else {
+            throw new Error('Error fetching events')
+          }
+        })
+        .then(events => {
+          if (events.length === 0) {
+            const noDataMessage = document.createElement('p')
+            noDataMessage.textContent = 'No events available.'
+            const eventsContainer = document.getElementById('events-container')
+            eventsContainer.appendChild(noDataMessage)
+          } else {
+            events.forEach(event => {
+              addEventToContainer(event)
+            })
+          }
+        })
+        .catch(error => {
+          console.error(error)
+        })
+    </script>
+  </body>
+</html>

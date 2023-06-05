@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Webhook Client</title>
+    <style>
+      body {
+        height: 100vh;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background: #1b1b1b;
+        color: #f1f1f1;
+        backdrop-filter: blur(5px);
+      }
+      h1 {
+        margin-top: 50px;
+        color: #5ea2ff;
+      }
+      p {
+        margin: 20px;
+        color: #ffffff;
+      }
+      .button {
+        display: inline-block;
+        background-color: #5ea2ff;
+        color: #ffffff;
+        text-decoration: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        border: none;
+        transition: all 0.3s ease;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+        font-size: 16px;
+      }
+      .button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+      }
+      .button:active {
+        transform: translateY(1px);
+        box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3);
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Welcome to the Webhook Server</h1>
+    <p>This is a user-friendly landing page for your webhook server.</p>
+    <p>You can send POST requests to the <strong>/webhook</strong> endpoint.</p>
+    <a href="/events" class="button">View Events</a>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io()
+      socket.on('connect', () => {
+        console.log('Connected to server')
+      })
+      socket.on('disconnect', () => {
+        console.log('Disconnected from server')
+      })
+    </script>
+  </body>
+</html>
